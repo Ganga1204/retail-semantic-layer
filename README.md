@@ -1,5 +1,7 @@
 # Retail Customer 360: Ontology-Driven Semantic Layer
 
+![Tests](https://github.com/Ganga1204/retail-semantic-layer/actions/.github/workflows/ci.yml/badge.svg)
+
 A portfolio project for a Senior Data Engineer role demonstrating how raw transactional data becomes a governed dimensional model, an **ontology** defines business terms and relationships, and a **semantic layer (dbt MetricFlow)** serves a single governed definition for core enterprise KPIs.
 
 > [!IMPORTANT]
