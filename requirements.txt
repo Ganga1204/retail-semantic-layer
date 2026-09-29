@@ -1,0 +1,7 @@
+dbt-duckdb
+dbt-metricflow
+faker
+rdflib
+pytest
+pandas
+pyyaml
