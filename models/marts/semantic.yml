@@ -1,0 +1,97 @@
+models:
+  - name: metricflow_time_spine
+    time_spine:
+      standard_granularity_column: date_day
+    columns:
+      - name: date_day
+        granularity: day
+
+semantic_models:
+  - name: customers
+    model: ref('dim_customer')
+    defaults:
+      agg_time_dimension: signup_date
+    entities:
+      - name: customer
+        type: primary
+        expr: customer_id
+    dimensions:
+      - name: signup_date
+        type: time
+        type_params:
+          time_granularity: day
+      - name: country
+        type: categorical
+      - name: segment
+        type: categorical
+    measures:
+      - name: customer_count
+        agg: count_distinct
+        expr: customer_id
+      - name: active_90d_count
+        agg: sum
+        expr: is_active_90d
+      - name: active_365d_count
+        agg: sum
+        expr: is_active_365d
+      - name: engaged_30d_count
+        agg: sum
+        expr: is_active_30d_support
+
+  - name: orders
+    model: ref('fct_orders')
+    defaults:
+      agg_time_dimension: order_date
+    entities:
+      - name: order
+        type: primary
+        expr: order_id
+      - name: customer
+        type: foreign
+        expr: customer_id
+    dimensions:
+      - name: order_date
+        type: time
+        type_params:
+          time_granularity: day
+      - name: status
+        type: categorical
+    measures:
+      - name: revenue
+        agg: sum
+        expr: amount
+      - name: order_count
+        agg: count
+        expr: order_id
+
+metrics:
+  - name: active_customers
+    label: "Active Customers (official, 90d)"
+    type: simple
+    type_params:
+      measure: active_90d_count
+
+  - name: active_customers_365d
+    label: "Retained Customers (12m, Finance)"
+    type: simple
+    type_params:
+      measure: active_365d_count
+
+  - name: engaged_customers_30d
+    label: "Engaged Customers (30d, Support)"
+    type: simple
+    type_params:
+      measure: engaged_30d_count
+
+  - name: total_revenue
+    label: "Total Revenue"
+    type: simple
+    type_params:
+      measure: revenue
+
+  - name: revenue_per_active_customer
+    label: "Revenue per Active Customer"
+    type: ratio
+    type_params:
+      numerator: total_revenue
+      denominator: active_customers

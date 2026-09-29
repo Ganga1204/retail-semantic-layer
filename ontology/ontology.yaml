@@ -1,0 +1,42 @@
+ontology: retail_customer_360
+version: 0.1.0
+object_types:
+  Customer:
+    description: A person or business with an account.
+    primary_key: customer_id
+    properties:
+      customer_id:   {type: integer, maps_to: dim_customer.customer_id}
+      full_name:     {type: string,  maps_to: dim_customer.full_name}
+      country:       {type: string,  maps_to: dim_customer.country}
+      segment:       {type: string,  maps_to: dim_customer.segment}
+      signup_date:   {type: date,    maps_to: dim_customer.signup_date}
+      is_active:     {type: boolean, maps_to: dim_customer.is_active_90d,
+                      definition: ActiveCustomer}
+  Order:
+    description: A purchase placed by a customer.
+    primary_key: order_id
+    properties:
+      order_id:   {type: integer, maps_to: fct_orders.order_id}
+      order_date: {type: date,    maps_to: fct_orders.order_date}
+      amount:     {type: number,  maps_to: fct_orders.amount}
+      status:     {type: string,  maps_to: fct_orders.status}
+  SupportTicket:
+    description: A help request raised by a customer.
+    primary_key: ticket_id
+    properties:
+      ticket_id:   {type: integer, maps_to: fct_tickets.ticket_id}
+      opened_date: {type: date,    maps_to: fct_tickets.opened_date}
+      category:    {type: string,  maps_to: fct_tickets.category}
+links:
+  - {name: places, from: Customer, to: Order,         cardinality: one-to-many, via: fct_orders.customer_id}
+  - {name: raises, from: Customer, to: SupportTicket, cardinality: one-to-many, via: fct_tickets.customer_id}
+actions:
+  - {name: FlagAtRiskCustomer, applies_to: Customer, description: "Mark a customer for retention outreach."}
+definitions:
+  ActiveCustomer:
+    official: "Customer with a completed order in the last 90 days."
+    owner: Marketing
+    metric: active_customers
+    variants:
+      - {name: RetainedCustomer12m, rule: "Completed order in last 365 days", owner: Finance, metric: active_customers_365d}
+      - {name: EngagedCustomer30d,   rule: "Order or ticket in last 30 days", owner: Support, metric: engaged_customers_30d}

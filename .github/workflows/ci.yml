@@ -1,0 +1,51 @@
+name: Governance & Data Pipeline CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install dbt-duckdb dbt-metricflow faker rdflib pytest pandas pyyaml
+
+      - name: Generate Synthetic Dataset
+        run: python data_gen/generate.py
+
+      - name: Build & Validate dbt Data Models
+        env:
+          DBT_PROFILES_DIR: .
+        run: |
+          dbt seed
+          dbt run
+          dbt test
+
+      - name: Validate MetricFlow Semantic Layer
+        env:
+          DBT_PROFILES_DIR: .
+          PYTHONIOENCODING: utf-8
+        run: |
+          mf validate-configs
+          mf list metrics
+          mf query --metrics active_customers,active_customers_365d,engaged_customers_30d --group-by customer__segment
+
+      - name: Run Ontology & Metric Schema Governance Unit Tests
+        env:
+          DBT_PROFILES_DIR: .
+          PYTHONIOENCODING: utf-8
+        run: pytest -v

@@ -1,0 +1,60 @@
+@prefix ex: <http://example.org/retail#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+ex:Customer_country a owl:DatatypeProperty ;
+    rdfs:domain ex:Customer .
+
+ex:Customer_customer_id a owl:DatatypeProperty ;
+    rdfs:domain ex:Customer .
+
+ex:Customer_full_name a owl:DatatypeProperty ;
+    rdfs:domain ex:Customer .
+
+ex:Customer_is_active a owl:DatatypeProperty ;
+    rdfs:domain ex:Customer .
+
+ex:Customer_segment a owl:DatatypeProperty ;
+    rdfs:domain ex:Customer .
+
+ex:Customer_signup_date a owl:DatatypeProperty ;
+    rdfs:domain ex:Customer .
+
+ex:Order_amount a owl:DatatypeProperty ;
+    rdfs:domain ex:Order .
+
+ex:Order_order_date a owl:DatatypeProperty ;
+    rdfs:domain ex:Order .
+
+ex:Order_order_id a owl:DatatypeProperty ;
+    rdfs:domain ex:Order .
+
+ex:Order_status a owl:DatatypeProperty ;
+    rdfs:domain ex:Order .
+
+ex:SupportTicket_category a owl:DatatypeProperty ;
+    rdfs:domain ex:SupportTicket .
+
+ex:SupportTicket_opened_date a owl:DatatypeProperty ;
+    rdfs:domain ex:SupportTicket .
+
+ex:SupportTicket_ticket_id a owl:DatatypeProperty ;
+    rdfs:domain ex:SupportTicket .
+
+ex:places a owl:ObjectProperty ;
+    rdfs:domain ex:Customer ;
+    rdfs:range ex:Order .
+
+ex:raises a owl:ObjectProperty ;
+    rdfs:domain ex:Customer ;
+    rdfs:range ex:SupportTicket .
+
+ex:SupportTicket a owl:Class ;
+    rdfs:comment "A help request raised by a customer." .
+
+ex:Order a owl:Class ;
+    rdfs:comment "A purchase placed by a customer." .
+
+ex:Customer a owl:Class ;
+    rdfs:comment "A person or business with an account." .
+

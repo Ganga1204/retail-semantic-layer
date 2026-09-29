@@ -1,0 +1,7 @@
+name: retail_semantic
+version: "1.0"
+profile: retail_semantic
+model-paths: ["models"]
+seed-paths: ["seeds"]
+vars:
+  as_of_date: "2026-06-30"
